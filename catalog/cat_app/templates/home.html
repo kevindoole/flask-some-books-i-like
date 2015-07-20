@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Catalog</title>
+</head>
+<body>
+
+	{% if categories %}
+		<h1>categories</h1>
+		<ul>
+			{% for c in categories %}
+			<li>
+				<a href="/catalog/{{ c.name }}/items">{{ c.name }}</a>
+			</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		No categories
+	{% endif %}
+
+	{% if products %}
+		<h1>products</h1>
+		<ul>
+			{% for p in products %}
+			<li>
+				<h2><a href="/catalog/{{ p.category.name }}/{{ p.name }}">{{ p.name }}</a></h2>
+				<p>{{ p.description }}</p>
+			</li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		No products
+	{% endif %}
+</body>
+</html>

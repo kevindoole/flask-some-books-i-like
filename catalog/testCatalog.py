@@ -19,6 +19,11 @@ class TestCatalog(unittest.TestCase):
 	def tearDown(self):
 		os.unlink(self.test_db)
 
+	def test_empty_db(self):
+		homepage = self.app.get('/')
+		assert 'No products' in homepage.data
+		assert 'No categories' in homepage.data
+
 	def test_models(self):
 		from cat_app.models import Category, Product
 		from cat_app.database import db_session

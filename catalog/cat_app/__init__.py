@@ -8,7 +8,18 @@ app.config.update(dict(
     DEBUG = True
 ))
 
+@app.route('/')
+def homepage():
+	# from models import Product, Category
+	# products = Product.query.all()
+	# categories = Category.query.all()
+	return render_template('home.html')
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
 	from database import db_session
 	db_session.remove()
+
+if __name__ == '__main__':
+	app.debug = True
+	app.run(host = '0.0.0.0', port = 8000)
