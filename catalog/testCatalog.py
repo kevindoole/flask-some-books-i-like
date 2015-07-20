@@ -48,6 +48,19 @@ class TestCatalog(unittest.TestCase):
 		assert '<input name="name' in new_product_form.data
 		assert '<textarea name="description' in new_product_form.data
 
+		new_product_page = self.app.post('/catalog/create-product', data=dict(
+			name='a new product',
+			description='description text'
+		), follow_redirects=True)
+		assert 'Product created' in new_product_page.data
+		assert 'a new product' in new_product_page.data
+		assert 'description text' in new_product_page.data
+
+		homepage = self.app.get('/')
+		assert 'No products' not in homepage.data
+		assert 'a new product' in homepage.data
+		assert 'description text' not in homepage.data
+
 
 if __name__ == '__main__':
     unittest.main()
