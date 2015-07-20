@@ -1,16 +1,13 @@
+import os
 import json
 from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'storage/catalog.db')
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+db = SQLAlchemy(app)
 
-app.config.update(dict(
-    DATABASE = 'sqlite:///storage/catalog.db',
-    DEBUG = True
-))
-
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-	from database import db_session
-	db_session.remove()
-
-import cat_app.views
+from cat_app import views, models

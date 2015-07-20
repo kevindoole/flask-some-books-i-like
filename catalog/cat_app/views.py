@@ -3,7 +3,7 @@ from cat_app import app
 
 @app.route('/')
 def homepage():
-	# from models import Product, Category
+	# from cat_app.models import Category, Product
 	# products = Product.query.all()
 	# categories = Category.query.all()
 	return render_template('home.html')

@@ -1,5 +1,5 @@
 .vagrant
-catalog/storage/*.db
+catalog/cat_app/storage/*.db
 
 .DS_Store
 .AppleDouble
