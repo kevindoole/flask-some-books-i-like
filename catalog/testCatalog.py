@@ -27,7 +27,6 @@ class TestCatalog(unittest.TestCase):
 	def test_models(self):
 		from cat_app.models import Category, Product
 		from cat_app.database import db_session
-
 		cat = Category(name = 'TestCategory')
 		cats = Category.query.all()
 		db_session.add(cat)
@@ -49,12 +48,18 @@ class TestCatalog(unittest.TestCase):
 		assert '<textarea name="description' in new_product_form.data
 
 		new_product_page = self.app.post('/catalog/create-product', data=dict(
-			name='a new product',
-			description='description text'
-		), follow_redirects=True)
+			name = 'a new product',
+			description = 'description text'
+		), follow_redirects = True)
 		assert 'Product created' in new_product_page.data
 		assert 'a new product' in new_product_page.data
 		assert 'description text' in new_product_page.data
+		from cat_app.models import Category, Product
+		from cat_app.database import db_session
+		prod = Product.query.first()
+		assert 'a new product' == prod.name
+		assert 'description text' == prod.description
+
 
 		homepage = self.app.get('/')
 		assert 'No products' not in homepage.data
