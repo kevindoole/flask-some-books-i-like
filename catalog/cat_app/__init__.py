@@ -15,6 +15,10 @@ def homepage():
 	# categories = Category.query.all()
 	return render_template('home.html')
 
+@app.route('/catalog/create-product')
+def new_product():
+	return render_template('edit-product.html')
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
 	from database import db_session

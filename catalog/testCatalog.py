@@ -43,6 +43,11 @@ class TestCatalog(unittest.TestCase):
 		assert prod.description == 'This is a product'
 		assert prod.category == cat
 
+	def test_it_can_save_products(self):
+		new_product_form = self.app.get('/catalog/create-product')
+		assert '<input name="name' in new_product_form.data
+		assert '<textarea name="description' in new_product_form.data
+
 
 if __name__ == '__main__':
     unittest.main()
