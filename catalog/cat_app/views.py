@@ -31,5 +31,29 @@ def new_product():
 
 		url = url_for('product', category_slug=category.slug, product_slug=prod.slug)
 		return redirect(url)
-		# return redirect(url)
+
+	return render_template('edit-product.html', form=form)
+
+
+@app.route('/catalog/<string:product_slug>/edit', methods = ['GET', 'POST'])
+def edit_product(product_slug):
+	product = Product.query.filter(Product.slug == product_slug).one()
+	product.category_name = product.category.name
+	form = ProductForm(request.form, product)
+	if request.method == 'POST' and form.validate():
+		category_name = form.category.data
+		categories = Category.query.filter(Category.name == category_name).all()
+		if not len(categories):
+			category = Category(name=category_name)
+		else:
+			category = categories[0]
+
+		prod = Product(name = form.name.data, description = form.description.data, category=category)
+		db.session.add(prod)
+		db.session.commit()
+		flash(message='Product created', category='success')
+
+		url = url_for('product', category_slug=category.slug, product_slug=prod.slug)
+		return redirect(url)
+
 	return render_template('edit-product.html', form=form)
