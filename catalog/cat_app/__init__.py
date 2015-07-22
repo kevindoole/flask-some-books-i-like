@@ -9,6 +9,7 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+app.config['SECRET_KEY'] = 'blurfschkie'
 db = SQLAlchemy(app)
 
 from cat_app import views, models

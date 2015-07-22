@@ -5,11 +5,11 @@
 	<title>Edit</title>
 </head>
 <body>
-	<form action="/catalog/{{ product.name if product }}/edit" method="post">
-		<label for="">Name</label><br>
-		<input name="name" type="text" value="{{ product.name if product }}"><br><br>
-		<label for="">Description</label><br>
-		<textarea name="description" cols="30" rows="10">{{ product.description if product }}</textarea><br><br>
+	{% from "common/_form-helpers.html" import render_field %}
+	<form action="/catalog/create-product" method="post">
+		{{ render_field(form.name) }}
+		{{ render_field(form.description) }}
+		{{ render_field(form.category) }}
 		<input type="submit" value="Save">
 	</form>
 </body>

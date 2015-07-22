@@ -6,6 +6,8 @@
 </head>
 <body>
 
+	{% include 'common/_flash-messages.html' %}
+
 	{% if categories %}
 		<h1>categories</h1>
 		<ul>
@@ -25,7 +27,6 @@
 			{% for p in products %}
 			<li>
 				<h2><a href="/catalog/{{ p.category.name }}/{{ p.name }}">{{ p.name }}</a></h2>
-				<p>{{ p.description }}</p>
 			</li>
 			{% endfor %}
 		</ul>
