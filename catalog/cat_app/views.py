@@ -18,8 +18,8 @@ CLIENT_ID = json.loads(open(secrets_path, 'r').read())['web']['client_id']
 
 
 def anti_forgery_state_token():
-	chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
-	return ''.join(random.choice(chars) for x in range(32))
+    chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    return ''.join(random.choice(chars) for x in range(32))
 
 
 @app.route('/login')
@@ -101,6 +101,33 @@ def gconnect():
 
     return 'logged in'
 
+@app.route('/gdisconnect')
+def gdisconnect():
+    access_token = login_session.get('access_token')
+    if access_token is None:
+        response = make_response(
+            json.dumps('Current user is not connected'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+
+    if result['status'] == '200':
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        # del login_session['email']
+        del login_session['picture']
+
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    else:
+        response = make_response(
+            json.dumps('Failed to revoke token for given user.', 400))
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 @app.route('/')
 def homepage():
@@ -117,6 +144,10 @@ def product(category_slug, product_slug):
 
 @app.route('/catalog/create-product', methods=['GET', 'POST'])
 def new_product():
+    if 'username' not in login_session:
+        flash('You are not authorized to access that page. Please log in.')
+        return redirect('/login')
+
     form = ProductForm(request.form)
     if request.method == 'POST' and form.validate():
         category_name = form.category.data
@@ -128,7 +159,7 @@ def new_product():
             category = categories[0]
 
         prod = Product(name=form.name.data, description=form.description.data,
-        			   category=category)
+                       category=category)
         db.session.add(prod)
         db.session.commit()
         flash(message='Product created', category='success')
@@ -155,7 +186,7 @@ def edit_product(product_slug):
             category = categories[0]
 
         prod = Product(name=form.name.data, description=form.description.data,
-        			   category=category)
+                       category=category)
         db.session.add(prod)
         db.session.commit()
         flash(message='Product created', category='success')

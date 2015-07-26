@@ -44,10 +44,14 @@ class TestCatalog(unittest.TestCase):
         with self.app as c:
             new_product_page = c.get('/catalog/create-product',
                                      follow_redirects=True)
-            assert flask.request.path == '/'
+            assert flask.request.path == '/login'
             assert 'You are not authorized' in new_product_page.data
 
     def test_it_can_save_products(self):
+        with self.app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['username'] = 'testuser'
+
         new_product_form = self.app.get('/catalog/create-product')
         assert '<input id="name' in new_product_form.data
         assert '<textarea id="description' in new_product_form.data
@@ -74,6 +78,9 @@ class TestCatalog(unittest.TestCase):
         assert 'description text' not in homepage.data
 
     def test_it_validates_form_requests(self):
+        with self.app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['username'] = 'testuser'
         new_product_page = None
         with self.app as c:
             new_product_page = c.post('/catalog/create-product', data=dict(
