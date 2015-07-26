@@ -1,6 +1,7 @@
 import os
 import json
 from flask import Flask
+from flask import session as login_session
 from flask.ext.sqlalchemy import SQLAlchemy
 
 basedir = os.path.abspath(os.path.dirname(__file__))

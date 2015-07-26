@@ -4,6 +4,7 @@ from cat_app import app, db, basedir
 from cat_app.models import Product, Category
 import flask
 
+
 class TestCatalog(unittest.TestCase):
 
     def setUp(self):
@@ -39,6 +40,13 @@ class TestCatalog(unittest.TestCase):
         assert prod.description == 'This is a product'
         assert prod.category == cat
 
+    def test_only_authorized_users_can_access_admin_pages(self):
+        with self.app as c:
+            new_product_page = c.get('/catalog/create-product',
+                                     follow_redirects=True)
+            assert flask.request.path == '/'
+            assert 'You are not authorized' in new_product_page.data
+
     def test_it_can_save_products(self):
         new_product_form = self.app.get('/catalog/create-product')
         assert '<input id="name' in new_product_form.data
@@ -48,10 +56,10 @@ class TestCatalog(unittest.TestCase):
         new_product_page = None
         with self.app as c:
             new_product_page = c.post('/catalog/create-product', data=dict(
-                name = 'a new product',
-                description = 'description text',
-                category = 'test category'
-            ), follow_redirects = True)
+                name='a new product',
+                description='description text',
+                category='test category'
+            ), follow_redirects=True)
             assert flask.request.path == '/catalog/test-category/a-new-product'
 
         assert 'Product created' in new_product_page.data
@@ -69,10 +77,10 @@ class TestCatalog(unittest.TestCase):
         new_product_page = None
         with self.app as c:
             new_product_page = c.post('/catalog/create-product', data=dict(
-                name = '',
-                description = '',
-                category = ''
-            ), follow_redirects = True)
+                name='',
+                description='',
+                category=''
+            ), follow_redirects=True)
             assert flask.request.path == '/catalog/create-product'
 
         assert 'Product created' not in new_product_page.data
