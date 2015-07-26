@@ -173,6 +173,9 @@ def new_product():
 
 @app.route('/catalog/<string:product_slug>/edit', methods=['GET', 'POST'])
 def edit_product(product_slug):
+    if 'username' not in login_session:
+        flash('You are not authorized to access that page. Please log in.')
+        return redirect('/login')
     product = Product.query.filter(Product.slug == product_slug).one()
     product.category_name = product.category.name
     form = ProductForm(request.form, product)
