@@ -13,7 +13,7 @@
 		<ul>
 			{% for c in categories %}
 			<li>
-				<a href="/catalog/{{ c.name }}/items">{{ c.name }}</a>
+				<a href="/catalog/{{ c.slug }}/items">{{ c.name }}</a>
 			</li>
 			{% endfor %}
 		</ul>
@@ -26,7 +26,7 @@
 		<ul>
 			{% for p in products %}
 			<li>
-				<h2><a href="/catalog/{{ p.category.name }}/{{ p.name }}">{{ p.name }}</a></h2>
+				<h2><a href="/catalog/{{ p.category.slug }}/{{ p.slug }}">{{ p.name }}</a></h2>
 			</li>
 			{% endfor %}
 		</ul>

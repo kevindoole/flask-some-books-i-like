@@ -86,7 +86,7 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    login_session['stored_access_token'] = access_token
+    login_session['access_token'] = access_token
     login_session['gplus_id'] = gplus_id
     userinfo_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
     params = {'access_token': access_token, 'alt': 'json'}
