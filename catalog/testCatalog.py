@@ -48,7 +48,7 @@ class TestCatalog(unittest.TestCase):
             assert 'You are not authorized' in new_product_page.data
 
     def test_it_can_save_products(self):
-        with self.app.test_client() as c:
+        with self.app as c:
             with c.session_transaction() as sess:
                 sess['username'] = 'testuser'
 
@@ -78,7 +78,7 @@ class TestCatalog(unittest.TestCase):
         assert 'description text' not in homepage.data
 
     def test_it_validates_form_requests(self):
-        with self.app.test_client() as c:
+        with self.app as c:
             with c.session_transaction() as sess:
                 sess['username'] = 'testuser'
         new_product_page = None
