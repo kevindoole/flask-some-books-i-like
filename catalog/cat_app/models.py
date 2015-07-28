@@ -2,9 +2,11 @@
 from cat_app import db
 from slugify import slugify
 
+
 def slug(context):
-	slug = slugify(context.current_parameters['name'])
-	return slug
+    slug = slugify(context.current_parameters['name'])
+    return slug
+
 
 class Category(db.Model):
     __tablename__ = 'category'
@@ -24,8 +26,10 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
     description = db.Column(db.Text)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
-    category = db.relationship(Category)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'),
+                            nullable=True)
+    category = db.relationship('Category',
+                               backref=db.backref('products', lazy='dynamic'))
     slug = db.Column(db.String(250), default=slug, onupdate=slug)
 
     def __init__(self, name, description, category):

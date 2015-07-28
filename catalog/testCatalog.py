@@ -25,7 +25,6 @@ class TestCatalog(unittest.TestCase):
 
     def test_models(self):
         cat = Category(name='TestCategory')
-        cats = Category.query.all()
         db.session.add(cat)
         db.session.commit()
         cat = Category.query.filter(Category.name == 'TestCategory').one()
@@ -92,6 +91,31 @@ class TestCatalog(unittest.TestCase):
 
         assert 'Product created' not in new_product_page.data
         assert 'This field is required' in new_product_page.data
+
+    def test_it_shows_correct_products_on_catalog_pages(self):
+        cat1 = Category(name='Gears')
+        cat2 = Category(name='Sprockets')
+        db.session.add(cat1)
+        db.session.add(cat2)
+        db.session.commit()
+
+        gears = Category.query.filter(Category.name == 'Gears').one()
+        sprockets = Category.query.filter(Category.name == 'Sprockets').one()
+        prod1 = Product(
+            name='Big Gears', description='blah', category=gears)
+        prod2 = Product(
+            name='Small Sprockets', description='blah', category=sprockets)
+        db.session.add(prod1)
+        db.session.add(prod2)
+        db.session.commit()
+
+        gears_page = self.app.get('/catalog/gears/items')
+        assert 'Small Sprockets' not in gears_page.data
+        assert 'Big Gears' in gears_page.data
+
+        sprockets_page = self.app.get('/catalog/sprockets/items')
+        assert 'Small Sprockets' in sprockets_page.data
+        assert 'Big Gears' not in sprockets_page.data
 
 
 if __name__ == '__main__':

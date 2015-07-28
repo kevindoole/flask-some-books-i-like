@@ -101,6 +101,7 @@ def gconnect():
 
     return 'logged in'
 
+
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
@@ -128,6 +129,7 @@ def gdisconnect():
             json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
+
 
 @app.route('/')
 def homepage():
@@ -199,3 +201,10 @@ def edit_product(product_slug):
         return redirect(url)
 
     return render_template('edit-product.html', form=form)
+
+
+@app.route('/catalog/<string:category_slug>/items')
+def catalog_archive(category_slug):
+    category = Category.query.filter(Category.slug == category_slug).one()
+    products = category.products.all()
+    return render_template('home.html', products=products)
