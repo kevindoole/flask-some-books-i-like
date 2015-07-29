@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Edit</title>
-</head>
-<body>
+{% extends "common/layout.html" %}
+
+{% block content %}
 	{% from "common/_form-helpers.html" import render_field %}
 	<form action="/catalog/create-product" method="post">
 		{{ render_field(form.name) }}
@@ -12,5 +8,4 @@
 		{{ render_field(form.category) }}
 		<input type="submit" value="Save">
 	</form>
-</body>
-</html>
+{% endblock %}

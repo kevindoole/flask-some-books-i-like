@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Catalog</title>
-</head>
-<body>
+{% extends "common/layout.html" %}
 
-	{% include 'common/_flash-messages.html' %}
-
+{% block content %}
 	{% if categories %}
 		<h1>categories</h1>
 		<ul>
@@ -33,5 +26,4 @@
 	{% else %}
 		No products
 	{% endif %}
-</body>
-</html>
+{% endblock %}

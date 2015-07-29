@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Product</title>
-</head>
-<body>
+{% extends "common/layout.html" %}
 
-	{% include 'common/_flash-messages.html' %}
-
+{% block content %}
 	<h1>{{ product.name }}</h1>
 	<p>{{ product.description }}</p>
 	<a href="/catalog/{{ product.slug }}/edit">Edit</a> | <a href="/catalog/{{ product.name }}/delete">Delete</a>
-</body>
-</html>
+{% endblock %}
