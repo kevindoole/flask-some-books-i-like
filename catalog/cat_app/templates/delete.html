@@ -1,0 +1,8 @@
+{% extends "common/layout.html" %}
+
+{% block content %}
+	<form action="/catalog/{{ product.slug }}/delete" method="post">
+		<label for="delete-confirm">Are you sure? Delete &ldquo;{{ product.name }}&rdquo;?</label>
+		<input id="delete-confirm" type="submit" value="Delete">
+	</form>
+{% endblock %}

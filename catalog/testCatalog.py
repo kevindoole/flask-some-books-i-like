@@ -117,6 +117,38 @@ class TestCatalog(unittest.TestCase):
         assert 'Small Sprockets' in sprockets_page.data
         assert 'Big Gears' not in sprockets_page.data
 
+    def test_it_confirms_deletion(self):
+        cat = Category(name='Gears')
+        prod = Product(
+            name='Big Gears', description='blah', category=cat)
+        db.session.add(cat)
+        db.session.add(prod)
+        db.session.commit()
+
+        with self.app as c:
+            with c.session_transaction() as sess:
+                sess['username'] = 'testuser'
+
+        delete_page = self.app.get('/catalog/big-gears/delete')
+        assert 'Are you sure? Delete &ldquo;Big Gears&rdquo;?' in delete_page.data
+
+    def test_it_deletes_products(self):
+        cat = Category(name='Gears')
+        prod = Product(
+            name='Big Gears', description='blah', category=cat)
+        db.session.add(cat)
+        db.session.add(prod)
+        db.session.commit()
+
+        with self.app as c:
+            with c.session_transaction() as sess:
+                sess['username'] = 'testuser'
+            deleted_page = c.post('/catalog/big-gears/delete',
+                follow_redirects=True)
+            assert flask.request.path == '/'
+            assert 'Deleted &ldquo;Big Gears&rdquo;' in deleted_page.data
+
+
 
 if __name__ == '__main__':
     unittest.main()

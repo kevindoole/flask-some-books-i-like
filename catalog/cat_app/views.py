@@ -203,6 +203,19 @@ def edit_product(product_slug):
     return render_template('edit-product.html', form=form)
 
 
+@app.route('/catalog/<string:product_slug>/delete', methods=['GET', 'POST'])
+def delete_product(product_slug):
+    if 'username' not in login_session:
+        flash('You are not authorized to access that page. Please log in.')
+        return redirect('/login')
+    product = Product.query.filter(Product.slug == product_slug).one()
+    if request.method == 'POST':
+        db.session.delete(product)
+        db.session.commit()
+        flash('Deleted &ldquo;%s&rdquo;' % product.name)
+        return redirect('/')
+    return render_template('delete.html', product=product)
+
 @app.route('/catalog/<string:category_slug>/items')
 def catalog_archive(category_slug):
     category = Category.query.filter(Category.slug == category_slug).one()
