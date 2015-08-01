@@ -2,7 +2,7 @@
 
 {% block content %}
 	{% from "common/_form-helpers.html" import render_field %}
-	<form action="/catalog/create-product" method="post">
+	<form action="{{ request.path }}" method="post">
 		{{ render_field(form.name) }}
 		{{ render_field(form.description) }}
 		{{ render_field(form.category) }}

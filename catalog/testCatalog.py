@@ -148,6 +148,35 @@ class TestCatalog(unittest.TestCase):
             assert flask.request.path == '/'
             assert 'Deleted &ldquo;Big Gears&rdquo;' in deleted_page.data
 
+    def test_it_can_edit_produts(self):
+        with self.app as c:
+            with c.session_transaction() as sess:
+                sess['username'] = 'testuser'
+
+        cat = Category(name='Gears')
+        prod = Product(
+            name='Big Gears', description='blah', category=cat)
+        db.session.add(cat)
+        db.session.add(prod)
+        db.session.commit()
+
+        edit_page = self.app.get('/catalog/big-gears/edit')
+        assert 'value="Big Gears"' in edit_page.data
+        assert 'value="Gears"' in edit_page.data
+        assert '>blah<' in edit_page.data
+
+        with self.app as c:
+            edit_result = c.post('/catalog/big-gears/edit', data=dict(
+                name='Updated Big Gears',
+                description='blah blah blah',
+                category='Gromp'
+            ), follow_redirects=True)
+            assert flask.request.path == '/catalog/gromp/updated-big-gears'
+            assert 'Product updated' in edit_result.data
+            assert 'Updated Big Gears' in edit_result.data
+            assert 'blah blah blah' in edit_result.data
+            assert 'Gromp' in edit_result.data
+
 
 
 if __name__ == '__main__':

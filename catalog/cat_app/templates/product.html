@@ -3,5 +3,6 @@
 {% block content %}
 	<h1>{{ product.name }}</h1>
 	<p>{{ product.description }}</p>
+	<p>{{ product.category.name }}</p>
 	<a href="/catalog/{{ product.slug }}/edit">Edit</a> | <a href="/catalog/{{ product.slug }}/delete">Delete</a>
 {% endblock %}

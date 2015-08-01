@@ -22,6 +22,12 @@ def anti_forgery_state_token():
     return ''.join(random.choice(chars) for x in range(32))
 
 
+@app.route('/reset')
+def reset_db():
+    db.drop_all()
+    db.create_all()
+    return 'done'
+
 @app.route('/login')
 def login():
     state = anti_forgery_state_token()
@@ -134,7 +140,8 @@ def gdisconnect():
 @app.route('/')
 def homepage():
     products = Product.query.all()
-    return render_template('home.html', products=products)
+    categories = Category.query.all()
+    return render_template('home.html', products=products, categories=categories)
 
 
 @app.route('/catalog/<string:category_slug>/<string:product_slug>')
@@ -179,25 +186,27 @@ def edit_product(product_slug):
         flash('You are not authorized to access that page. Please log in.')
         return redirect('/login')
     product = Product.query.filter(Product.slug == product_slug).one()
-    product.category_name = product.category.name
     form = ProductForm(request.form, product)
     if request.method == 'POST' and form.validate():
         category_name = form.category.data
         categories = Category.query.filter(
             Category.name == category_name).all()
         if not len(categories):
-            category = Category(name=category_name)
+            new_category = Category(name=category_name)
+            db.session.add(new_category)
+            db.session.commit()
+            category = Category.query.order_by(Category.id.desc()).first()
         else:
             category = categories[0]
 
-        prod = Product(name=form.name.data, description=form.description.data,
-                       category=category)
-        db.session.add(prod)
+        product.name = form.name.data
+        product.description = form.description.data
+        product.category = category
         db.session.commit()
-        flash(message='Product created', category='success')
+        flash(message='Product updated', category='success')
 
         url = url_for(
-            'product', category_slug=category.slug, product_slug=prod.slug)
+            'product', category_slug=category.slug, product_slug=product.slug)
         return redirect(url)
 
     return render_template('edit-product.html', form=form)
