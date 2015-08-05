@@ -21,7 +21,7 @@ def anti_forgery_state_token():
 def login():
     state = anti_forgery_state_token()
     login_session['state'] = state
-    return render_template('login.html', state=state)
+    return render_template('auth/login.html', state=state)
 
 
 @auth.route('/gconnect', methods=['POST'])
