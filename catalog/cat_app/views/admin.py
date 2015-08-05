@@ -5,6 +5,7 @@ from cat_app.form_requests.product import ProductForm
 
 admin = Blueprint('admin', __name__)
 
+
 @admin.route('/catalog/create-product', methods=['GET', 'POST'])
 def new_product():
     if 'username' not in login_session:
@@ -27,8 +28,8 @@ def new_product():
         db.session.commit()
         flash(message='Product created', category='success')
 
-        url = url_for(
-            'frontend.product', category_slug=category.slug, product_slug=prod.slug)
+        url = url_for('frontend.product', category_slug=category.slug,
+                      product_slug=prod.slug)
         return redirect(url)
 
     return render_template('admin/edit-product.html', form=form)
@@ -59,8 +60,8 @@ def edit_product(product_slug):
         db.session.commit()
         flash(message='Product updated', category='success')
 
-        url = url_for(
-            'frontend.product', category_slug=category.slug, product_slug=product.slug)
+        url = url_for('frontend.product', category_slug=category.slug,
+                      product_slug=product.slug)
         return redirect(url)
 
     return render_template('admin/edit-product.html', form=form)

@@ -2,8 +2,12 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
 import json
-from flask import make_response, Blueprint, render_template, request, flash, redirect, url_for
-import requests, os, random, string
+from flask import make_response, Blueprint, render_template, request
+from flask import flash, redirect, url_for
+import requests
+import os
+import random
+import string
 from cat_app import login_session, db
 
 secrets_path = os.path.join('/vagrant/catalog/cat_app', 'client_secrets.json')
@@ -16,6 +20,7 @@ auth = Blueprint('auth', __name__)
 def anti_forgery_state_token():
     chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
     return ''.join(random.choice(chars) for x in range(32))
+
 
 @auth.route('/login')
 def login():

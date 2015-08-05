@@ -5,6 +5,7 @@ from cat_app.form_requests.product import ProductForm
 
 frontend = Blueprint('frontend', __name__)
 
+
 @frontend.route('/reset')
 def reset_db():
     db.drop_all()
@@ -16,7 +17,8 @@ def reset_db():
 def homepage():
     products = Product.query.all()
     categories = Category.query.all()
-    return render_template('frontend/home.html', products=products, categories=categories)
+    return render_template('frontend/home.html', products=products,
+                           categories=categories)
 
 
 @frontend.route('/catalog/<string:category_slug>/<string:product_slug>')
