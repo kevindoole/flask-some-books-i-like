@@ -13,4 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SECRET_KEY'] = 'blurfschkie'
 db = SQLAlchemy(app)
 
-from cat_app import views, models
+from cat_app import all_views, models
+from .views.auth import auth
+
+app.register_blueprint(auth)
