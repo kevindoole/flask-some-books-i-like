@@ -12,8 +12,10 @@
 		</div>
 		<div class="side-image-content">
 			<h1>{{ product.name }}</h1>
-			<p>{{ product.description }}</p>
-			<a href="/catalog/{{ product.slug }}/edit">Edit</a> | <a href="/catalog/{{ product.slug }}/delete">Delete</a>
+			<p>{{ product.description | safe }}</p>
+			{% if session.username %}
+				<a href="/catalog/{{ product.slug }}/edit">Edit</a> | <a href="/catalog/{{ product.slug }}/delete">Delete</a>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}

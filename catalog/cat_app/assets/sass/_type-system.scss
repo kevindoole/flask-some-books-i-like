@@ -73,23 +73,18 @@ body {
     }
   }
 
-  code {
-    background: #F7F7F7;
-    border-radius: $base-border-radius * 1.5;
-    border: 1px solid #E0E0E0;
-    font-family: monaco;
-    font-size: 0.75em;
-    font-style: normal;
-    padding: 0.1em 0.4em;
-    white-space: nowrap;
-  }
-
   h3 {
     font-family: $serif;
     font-size: 1.4em;
     font-weight: 400;
     line-height: 1.3em;
     margin-bottom: .4em;
+  }
+
+  .subhead {
+    font-size: 1.1em;
+    font-weight: normal;
+    color: $base-font-color;
   }
 
   .date {

@@ -25,6 +25,9 @@ class Product(db.Model):
     __tablename__ = 'product'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
+    subhead = db.Column(db.String(250), nullable=True)
+    author = db.Column(db.String(250))
+    year = db.Column(db.Integer)
     description = db.Column(db.Text)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'),
                             nullable=True)
@@ -32,7 +35,10 @@ class Product(db.Model):
                                backref=db.backref('products', lazy='dynamic'))
     slug = db.Column(db.String(250), default=slug, onupdate=slug)
 
-    def __init__(self, name, description, category):
+    def __init__(self, name, description, category, author, year, subhead=None):
         self.name = name
+        self.subhead = subhead
         self.description = description
         self.category = category
+        self.author = author
+        self.year = year

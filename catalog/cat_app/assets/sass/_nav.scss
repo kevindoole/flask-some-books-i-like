@@ -21,6 +21,7 @@
 		display: inline-block;
 		&::after {
 			content: "|";
+			color: $light-gray;
 		}
 		&:last-child::after {
 			content: "";
