@@ -1,6 +1,16 @@
-<a href="/">Home</a>
-{% if session.username %}
-	<a href="/logout">Logout</a>
-{% else %}
-	<a href="/login">Login</a>
-{% endif %}
+<div class="top-nav">
+	<div class="container">
+		<div class="left">
+			{% if session.username %}
+				<a href="/catalog/create-product">Add a book</a>
+			{% endif %}
+		</div>
+		<div class="right">
+		{% if session.username %}
+			<a href="/logout">Logout</a>
+		{% else %}
+			<a href="/login">Login</a>
+		{% endif %}
+		</div>
+	</div>
+</div>

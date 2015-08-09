@@ -1,5 +1,6 @@
 .vagrant
 catalog/cat_app/storage/*.db
+catalog/node_modules
 
 .DS_Store
 .AppleDouble

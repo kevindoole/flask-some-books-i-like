@@ -1,8 +1,19 @@
 {% extends "common/layout.html" %}
 
 {% block content %}
-	<h1>{{ product.name }}</h1>
-	<p>{{ product.description }}</p>
-	<p>{{ product.category.name }}</p>
-	<a href="/catalog/{{ product.slug }}/edit">Edit</a> | <a href="/catalog/{{ product.slug }}/delete">Delete</a>
+	<div class="breadcrumbs">
+		<a href="/">Books</a> /
+		<a href="/catalog/{{ product.category.slug }}/items">{{ product.category.name }}</a> /
+		{{ product.name }}
+	</div>
+	<div class="side-image">
+		<div class="images-wrapper">
+			<img src="http://placehold.it/363x432" alt="">
+		</div>
+		<div class="side-image-content">
+			<h1>{{ product.name }}</h1>
+			<p>{{ product.description }}</p>
+			<a href="/catalog/{{ product.slug }}/edit">Edit</a> | <a href="/catalog/{{ product.slug }}/delete">Delete</a>
+		</div>
+	</div>
 {% endblock %}

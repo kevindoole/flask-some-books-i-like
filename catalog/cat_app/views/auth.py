@@ -97,7 +97,7 @@ def gconnect():
     login_session['picture'] = data['picture']
     # login_session['email'] = data['email']
 
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("You are now logged in as %s" % login_session['username'], 'success')
 
     return 'logged in'
 
@@ -121,9 +121,10 @@ def gdisconnect():
         # del login_session['email']
         del login_session['picture']
 
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        # response = make_response(json.dumps('Successfully disconnected.'), 200)
+        # response.headers['Content-Type'] = 'application/json'
+        flash('You logged out.', 'success')
+        return redirect('/')
     else:
         response = make_response(
             json.dumps('Failed to revoke token for given user.', 400))

@@ -1,0 +1,39 @@
+.top-nav {
+	line-height: 40px;
+	position: relative;
+	top: 0;
+	background: $dark-gray;
+	margin-bottom: 2em;
+
+	a {
+		color: #fff;
+	}
+	a:hover, a:focus {
+		text-decoration: underline;
+	}
+}
+
+.nav {
+	text-align: center;
+	margin-bottom: 3em;
+
+	li {
+		display: inline-block;
+		&::after {
+			content: "|";
+		}
+		&:last-child::after {
+			content: "";
+		}
+	}
+
+
+	a {
+		padding: 0.25em 1.3em;
+	}
+
+	a.active {
+		color: $dark-gray;
+		font-weight: bold;
+	}
+}

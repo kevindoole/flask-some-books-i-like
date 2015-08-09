@@ -2,15 +2,24 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Catalog</title>
+	<title>Some books I like</title>
+	<link rel="stylesheet" href="/static/css/app.css">
+	<link href='//fonts.googleapis.com/css?family=Lusitana:400,700' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Merriweather+Sans:400,300,300italic,400italic,700italic,700,800,800italic' rel='stylesheet' type='text/css'>
+
+	{% block header %}{% endblock %}
 </head>
 <body>
 
 	{% include 'common/_header.html' %}
 
-	{% include 'common/_flash-messages.html' %}
+	<div class="container">
+		{% block content_heading %}{% endblock %}
+		{% include 'common/_flash-messages.html' %}
+		{% block content %}{% endblock %}
+	</div>
 
-	{% block content %}{% endblock %}
-
+{% block footer %}{% endblock %}
 </body>
 </html>

@@ -32,4 +32,5 @@ def product(category_slug, product_slug):
 def catalog_archive(category_slug):
     category = Category.query.filter(Category.slug == category_slug).one()
     products = category.products.all()
-    return render_template('frontend/home.html', products=products)
+    categories = Category.query.all()
+    return render_template('frontend/home.html', products=products, categories=categories, selected_cat=category.name)

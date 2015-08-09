@@ -1,0 +1,46 @@
+.side-image {
+  $base-line-height: 1.5em !default;
+  $action-color: #477DCA !default;
+  $dark-gray: #333 !default;
+  $large-screen: em(860) !default;
+  $base-font-color: $dark-gray !default;
+  $side-image-background-top: #B5EBEB;
+  $side-image-background-bottom: #5DAC5D;
+  $side-image-content-background: #F9F9F9;
+  $side-image-border: 1px solid darken(transparentize($side-image-background-bottom, 0.8), 30%);
+
+  background: $side-image-content-background;
+
+  @include media($large-screen) {
+    @include row(table);
+  }
+
+  .images-wrapper {
+    float: left;
+    @include span-columns(2);
+    img {
+      display: block;
+    }
+
+    @include media($medium-screen) {
+      @include span-columns(4);
+    }
+  }
+
+  .side-image-content {
+    float: right;
+    @include span-columns(10);
+    padding: 0 1em 1em;
+
+    @include media($medium-screen) {
+      padding-top: 1em;
+      @include span-columns(8);
+    }
+
+    @include media($large-screen) {
+      padding: 4em;
+    }
+  }
+
+  @include reset-display();
+}

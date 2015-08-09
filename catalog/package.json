@@ -1,0 +1,16 @@
+{
+  "name": "catalog",
+  "version": "1.0.0",
+  "description": "A selection of books i like",
+  "main": "run-server.py",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-sass": "^2.0.4"
+  },
+  "scripts": {
+    "test": "python testCatalog.py"
+  },
+  "author": "Kevin Doole",
+  "license": "ISC"
+}

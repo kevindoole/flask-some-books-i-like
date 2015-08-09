@@ -1,26 +1,45 @@
 {% extends "common/layout.html" %}
 
-{% block content %}
-	<a href="/catalog/create-product">New product</a>
-	{% if categories %}
-		<h1>categories</h1>
-		<ul>
-			{% for c in categories %}
-			<li>
-				<a href="/catalog/{{ c.slug }}/items">{{ c.name }}</a>
-			</li>
-			{% endfor %}
-		</ul>
-	{% else %}
-		No categories
-	{% endif %}
+{% block content_heading %}
+	<div class="twelve-col">
+		<h1 class="page-title">
+			{% if not selected_cat %}
+				All books
+			{% else %}
+				{{ selected_cat }} books
+			{% endif %}
+		</h1>
 
+		{% if categories %}
+			<ul class="nav">
+				<li>
+					<a class="{{ 'active' if not selected_cat }}" href="/">All books</a>
+				</li>
+				{% for c in categories %}
+				<li>
+					<a class="{{ 'active' if c.name == selected_cat }}" href="/catalog/{{ c.slug }}/items">{{ c.name }}</a>
+				</li>
+				{% endfor %}
+			</ul>
+		{% else %}
+			No categories
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block content %}
 	{% if products %}
-		<h1>products</h1>
-		<ul>
+		<ul class="container">
 			{% for p in products %}
-			<li>
-				<h2><a href="/catalog/{{ p.category.slug }}/{{ p.slug }}">{{ p.name }}</a></h2>
+			<li class="three-col">
+				<a href="/catalog/{{ p.category.slug }}/{{ p.slug }}">
+					<img src="http://placehold.it/260x300" alt="">
+					<h2>{{ p.name }}</h2>
+				</a>
+				<p class="author">
+					Author Name
+					<span class="date">2015</span>
+				</p>
 			</li>
 			{% endfor %}
 		</ul>

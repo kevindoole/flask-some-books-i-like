@@ -1,32 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Login</title>
+{% extends "common/layout.html" %}
+
+{% block header %}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
-</head>
-<body>
-	{% include 'common/_flash-messages.html' %}
-	<div id="signin-button">
-		<span
-			class="g-signin"
-			data-scope="openid"
-			data-clientid="138161459655-s92vdphdvvqqihrer737a4po9l7a30mv.apps.googleusercontent.com"
-			data-redirecturi="postmessage"
-			data-accesstype="offline"
-			data-cookiepolicy="single_host_origin"
-			data-callback="signInCallback"
-			data-approvalprompt="force"
-		>
-		</span>
-	</div>
-	<div id="result"></div>
+{% endblock %}
 
+{% block content %}
+	<div class="panel">
+		<h1>Identify yourself</h1>
+		<h2>Use one of the buttons below to sign in.</h2>
+		<hr>
+		<div id="signin-button">
+			<span
+				class="g-signin"
+				data-scope="openid"
+				data-clientid="138161459655-s92vdphdvvqqihrer737a4po9l7a30mv.apps.googleusercontent.com"
+				data-redirecturi="postmessage"
+				data-accesstype="offline"
+				data-cookiepolicy="single_host_origin"
+				data-callback="signInCallback"
+				data-approvalprompt="force"
+			>
+			</span>
+		</div>
+		<div id="result"></div>
+	</div>
+{% endblock %}
+
+{% block footer %}
 	<script>
 		function signInCallback(authResult) {
 			if (authResult['code']) {
-				$('#signin-button').hide();
+				$('#result').html('Authenticating<span id="dots"></span>');
+				animatePeriods();
 				$.ajax({
 					type: 'POST',
 					url: '/gconnect?state={{ state }}',
@@ -35,10 +41,11 @@
 					data: authResult['code'],
 					success: function(result) {
 						if (result) {
-							$('#result').html('Login successful<br>' + result + '<br>Redirecting...');
+							clearInterval($('#dots').data('interval'));
+							$('#result').html('Login successful<br>Redirecting...');
 							setTimeout(function() {
 								window.location.href = '/';
-							}, 4000);
+							}, 2000);
 						}
 					}
 				});
@@ -48,6 +55,19 @@
 				$('#result').html('Server call failed.');
 			}
 		}
+
+		function animatePeriods () {
+			var $dots = $('#dots');
+			var dotsInterval = setInterval( function () {
+				var text = $dots.text();
+				if ( text.length < 3 ) {
+					text += '.';
+				} else {
+					text = '.';
+				}
+				$dots.text(text);
+			}, 1000 );
+			$dots.data('interval', dotsInterval);
+		}
 	</script>
-</body>
-</html>
+{% endblock %}
