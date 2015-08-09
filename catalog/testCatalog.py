@@ -1,9 +1,14 @@
 import os
+from StringIO import StringIO
 import unittest
 from cat_app import app, db, basedir
 from cat_app.models import Product, Category
 import flask
 
+def test_image():
+    with open(os.path.join(basedir, 'assets/images/psychotic-reactions.jpg')) as test:
+        imgStringIO = StringIO(test.read())
+    return {'image': (imgStringIO, 'psychotic-reactions.jpg')}
 
 class TestCatalog(unittest.TestCase):
 
@@ -31,7 +36,8 @@ class TestCatalog(unittest.TestCase):
         assert cat.name == 'TestCategory'
 
         prod = Product(
-            name='TestProduct', description='This is a product', category=cat)
+            name='TestProduct', description='This is a product', category=cat,
+            subhead='this subhead', author='Kevin', year=2104)
         db.session.add(prod)
         db.session.commit()
         prod = Product.query.filter(Product.name == 'TestProduct').one()
@@ -59,9 +65,13 @@ class TestCatalog(unittest.TestCase):
         new_product_page = None
         with self.app as c:
             new_product_page = c.post('/catalog/create-product', data=dict(
+                test_image(),
                 name='a new product',
                 description='description text',
-                category='test category'
+                category='test category',
+                year='2014',
+                author='Kevin',
+                subhead='the subhead'
             ), follow_redirects=True)
             assert flask.request.path == '/catalog/test-category/a-new-product'
 
@@ -83,9 +93,13 @@ class TestCatalog(unittest.TestCase):
         new_product_page = None
         with self.app as c:
             new_product_page = c.post('/catalog/create-product', data=dict(
+                test_image(),
                 name='',
                 description='',
-                category=''
+                category='',
+                year=2014,
+                author='Kevin',
+                subhead='the subhead'
             ), follow_redirects=True)
             assert flask.request.path == '/catalog/create-product'
 
@@ -102,9 +116,11 @@ class TestCatalog(unittest.TestCase):
         gears = Category.query.filter(Category.name == 'Gears').one()
         sprockets = Category.query.filter(Category.name == 'Sprockets').one()
         prod1 = Product(
-            name='Big Gears', description='blah', category=gears)
+            name='Big Gears', description='blah', category=gears,
+            subhead='this subhead', author='Kevin', year=2104)
         prod2 = Product(
-            name='Small Sprockets', description='blah', category=sprockets)
+            name='Small Sprockets', description='blah', category=sprockets,
+            subhead='this subhead', author='Kevin', year=2104)
         db.session.add(prod1)
         db.session.add(prod2)
         db.session.commit()
@@ -120,7 +136,8 @@ class TestCatalog(unittest.TestCase):
     def test_it_confirms_deletion(self):
         cat = Category(name='Gears')
         prod = Product(
-            name='Big Gears', description='blah', category=cat)
+            name='Big Gears', description='blah', category=cat,
+            subhead='this subhead', author='Kevin', year=2104)
         db.session.add(cat)
         db.session.add(prod)
         db.session.commit()
@@ -135,7 +152,8 @@ class TestCatalog(unittest.TestCase):
     def test_it_deletes_products(self):
         cat = Category(name='Gears')
         prod = Product(
-            name='Big Gears', description='blah', category=cat)
+            name='Big Gears', description='blah', category=cat,
+            subhead='this subhead', author='Kevin', year=2104)
         db.session.add(cat)
         db.session.add(prod)
         db.session.commit()
@@ -148,14 +166,15 @@ class TestCatalog(unittest.TestCase):
             assert flask.request.path == '/'
             assert 'Deleted &ldquo;Big Gears&rdquo;' in deleted_page.data
 
-    def test_it_can_edit_produts(self):
+    def test_it_can_edit_products(self):
         with self.app as c:
             with c.session_transaction() as sess:
                 sess['username'] = 'testuser'
 
         cat = Category(name='Gears')
         prod = Product(
-            name='Big Gears', description='blah', category=cat)
+            name='Big Gears', description='blah', category=cat,
+            subhead='this subhead', author='Kevin', year=2104)
         db.session.add(cat)
         db.session.add(prod)
         db.session.commit()
@@ -167,9 +186,13 @@ class TestCatalog(unittest.TestCase):
 
         with self.app as c:
             edit_result = c.post('/catalog/big-gears/edit', data=dict(
+                test_image(),
                 name='Updated Big Gears',
                 description='blah blah blah',
-                category='Gromp'
+                category='Gromp',
+                year='2014',
+                author='Kevin',
+                subhead='the subhead'
             ), follow_redirects=True)
             assert flask.request.path == '/catalog/gromp/updated-big-gears'
             assert 'Product updated' in edit_result.data
@@ -177,7 +200,21 @@ class TestCatalog(unittest.TestCase):
             assert 'blah blah blah' in edit_result.data
             assert 'Gromp' in edit_result.data
 
+    def test_it_can_handle_file_uploads(self):
+        with self.app as c:
+            with c.session_transaction() as sess:
+                sess['username'] = 'testuser'
 
+        create_result = c.post('/catalog/create-product', data=dict(
+            test_image(),
+            name='Updated Big Gears',
+            description='blah blah blah',
+            category='Gromp',
+            year='2014',
+            author='Kevin',
+            subhead='the subhead'
+        ), follow_redirects=True)
+        assert 'src="/media/psychotic-reactions.jpg"' in create_result.data
 
 if __name__ == '__main__':
     unittest.main()
