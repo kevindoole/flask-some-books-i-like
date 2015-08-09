@@ -32,7 +32,7 @@
 		<div class="grid-items">
 			{% for p in products %}
 			<a href="/catalog/{{ p.category.slug }}/{{ p.slug }}" class="grid-item">
-				<img src="http://placehold.it/300x300" alt="">
+				<img src="{{ p.image_url }}" alt="">
 				<h2>{{ p.name }}</h2>
 				{% if p.subhead %}
 					<h3 class="subhead">{{ p.subhead }}</h3>

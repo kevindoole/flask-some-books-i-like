@@ -1,4 +1,5 @@
-from flask import render_template, request, flash, redirect, url_for, Blueprint
+from flask import render_template, request, flash, redirect, url_for
+from flask import Blueprint, send_from_directory
 from cat_app import app, db, login_session
 from cat_app.models import Product, Category
 from cat_app.form_requests.product import ProductForm
@@ -6,11 +7,9 @@ from cat_app.form_requests.product import ProductForm
 frontend = Blueprint('frontend', __name__)
 
 
-@frontend.route('/reset')
-def reset_db():
-    db.drop_all()
-    db.create_all()
-    return 'done'
+@app.route('/media/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @frontend.route('/')

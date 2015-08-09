@@ -1,5 +1,4 @@
-import os
-import json
+import os, json
 from flask import Flask
 from flask import session as login_session
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -11,6 +10,11 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SECRET_KEY'] = 'blurfschkie'
+
+UPLOAD_FOLDER = os.path.join(basedir, 'assets/images')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
 db = SQLAlchemy(app)
 
 from cat_app import models

@@ -2,8 +2,12 @@
 
 {% block content %}
 	{% from "common/_form-helpers.html" import render_field %}
-	<form action="{{ request.path }}" method="post">
+	<form action="{{ request.path }}" method="post" enctype="multipart/form-data">
 		{{ render_field(form.name) }}
+		{{ render_field(form.subhead) }}
+		{{ render_field(form.author) }}
+		{{ render_field(form.year) }}
+		{{ render_field(form.image) }}
 		{{ render_field(form.description) }}
 		{{ render_field(form.category) }}
 		<input type="submit" value="Save">

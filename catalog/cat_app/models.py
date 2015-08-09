@@ -27,6 +27,7 @@ class Product(db.Model):
     name = db.Column(db.String(250))
     subhead = db.Column(db.String(250), nullable=True)
     author = db.Column(db.String(250))
+    image_url = db.Column(db.String(250))
     year = db.Column(db.Integer)
     description = db.Column(db.Text)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'),
@@ -35,10 +36,14 @@ class Product(db.Model):
                                backref=db.backref('products', lazy='dynamic'))
     slug = db.Column(db.String(250), default=slug, onupdate=slug)
 
-    def __init__(self, name, description, category, author, year, subhead=None):
+    def __init__(self, name, description, category, author, year,
+                 subhead=None, image_url=None):
         self.name = name
         self.subhead = subhead
         self.description = description
         self.category = category
         self.author = author
         self.year = year
+        if image_url == None:
+            image_url = "http://placehold.it/300x300"
+        self.image_url = image_url

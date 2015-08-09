@@ -240,7 +240,8 @@ prods = [
                 Advertising in Rolling Stone and other major publications.""",
             category=music,
             author="Lester Bangs",
-            year=2013),
+            year=2013,
+            image_url="/media/psychotic-reactions.jpg"),
     Product(name="Please Kill Me",
             subhead="The Uncensored Oral History of Punk",
             description="""A <i>Time Out</i> and <i>Daily News</i> Top Ten Book
