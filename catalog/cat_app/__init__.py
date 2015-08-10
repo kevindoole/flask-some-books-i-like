@@ -21,7 +21,9 @@ from cat_app import models
 from .views.auth import auth
 from .views.admin import admin
 from .views.frontend import frontend
+from .views.api import api
 
 app.register_blueprint(auth)
 app.register_blueprint(admin)
 app.register_blueprint(frontend)
+app.register_blueprint(api)

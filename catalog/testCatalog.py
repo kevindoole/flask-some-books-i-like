@@ -216,5 +216,22 @@ class TestCatalog(unittest.TestCase):
         ), follow_redirects=True)
         assert 'src="/media/psychotic-reactions.jpg"' in create_result.data
 
+    def test_it_provides_a_json_endpoint(self):
+        cat = Category(name='Gears')
+        prod = Product(
+            name='Big Gears', description='blah', category=cat,
+            subhead='this subhead', author='Kevin', year=2104)
+        db.session.add(prod)
+        db.session.commit()
+
+        json = self.app.get('/catalog.json');
+        assert '"name": "Gears"' in json.data
+        assert '"author": "Kevin",' in json.data
+        assert '"description": "blah",' in json.data
+        assert '"image_url": "http://placehold.it/300x300",' in json.data
+        assert '"name": "Big Gears",' in json.data
+        assert '"subhead": "this subhead",' in json.data
+        assert '"year": 2104' in json.data
+
 if __name__ == '__main__':
     unittest.main()
