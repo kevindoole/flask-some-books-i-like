@@ -68,7 +68,8 @@ def new_product():
 @admin.route('/catalog/<string:product_slug>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_product(product_slug):
-    product = Product.query.filter(Product.slug == product_slug).one()
+    product_query = Product.query.filter(Product.slug == product_slug)
+    product = product_query.one()
     form = ProductForm(request.form, product)
     if request.method == 'POST' and form.validate():
         category_name = form.category.data
@@ -82,9 +83,14 @@ def edit_product(product_slug):
         else:
             category = categories[0]
 
-        product.name = form.name.data
-        product.description = form.description.data
-        product.category = category
+        image_url = None
+        file = request.files[form.image.name]
+        if file.filename:
+            image_url = upload_file(file)
+
+        product_query.update({"name": form.name.data,
+            "description": form.description.data, "category_id": category.id,
+            "image_url": image_url})
         db.session.commit()
         flash(message='Product updated', category='success')
 
