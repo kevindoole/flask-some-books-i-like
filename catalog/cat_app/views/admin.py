@@ -97,7 +97,7 @@ def edit_product(product_slug):
         else:
             category = categories[0]
 
-        image_url = None
+        image_url = product.image_url
         file = request.files[form.image.name]
         if file.filename:
             image_url = upload_file(file)
@@ -112,7 +112,7 @@ def edit_product(product_slug):
                       product_slug=product.slug)
         return redirect(url)
 
-    return render_template('admin/edit-product.html', form=form)
+    return render_template('admin/edit-product.html', form=form, product=product)
 
 
 @admin.route('/catalog/<string:product_slug>/delete', methods=['GET', 'POST'])

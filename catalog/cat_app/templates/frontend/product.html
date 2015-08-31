@@ -8,7 +8,9 @@
 	</div>
 	<div class="side-image">
 		<div class="images-wrapper">
-			<img src="{{ product.image_url }}" alt="">
+			{% if product.image_url %}
+				<img src="{{ product.image_url }}" alt="">
+			{% endif %}
 		</div>
 		<div class="side-image-content">
 			<h1>{{ product.name }}</h1>

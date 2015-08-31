@@ -8,6 +8,10 @@
 		{{ render_field(form.subhead) }}
 		{{ render_field(form.author) }}
 		{{ render_field(form.year) }}
+		{% if product and product.image_url %}
+			Current image:<br>
+			<img width="50" src="{{ product.image_url }}" alt="">
+		{% endif %}
 		{{ render_field(form.image) }}
 		{{ render_field(form.description) }}
 		{{ render_field(form.category) }}
