@@ -1,7 +1,7 @@
 """Creates the database needed for the catalog."""
 from cat_app import db
 from slugify import slugify
-
+from datetime import datetime
 
 def slug(context):
     slug = slugify(context.current_parameters['name'])
@@ -30,6 +30,9 @@ class Product(db.Model):
     image_url = db.Column(db.String(250))
     year = db.Column(db.Integer)
     description = db.Column(db.Text)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, default=datetime.utcnow,
+        onupdate=datetime.utcnow)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'),
                             nullable=True)
     category = db.relationship('Category',
