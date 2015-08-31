@@ -6,9 +6,7 @@ from flask import make_response, Blueprint, render_template, request
 from flask import flash, redirect, url_for
 import requests
 import os
-import random
-import string
-from cat_app import login_session, db
+from cat_app import login_session, db, token
 
 secrets_path = os.path.join('/vagrant/catalog/cat_app', 'client_secrets.json')
 CLIENT_ID = json.loads(open(secrets_path, 'r').read())['web']['client_id']
@@ -17,14 +15,9 @@ CLIENT_ID = json.loads(open(secrets_path, 'r').read())['web']['client_id']
 auth = Blueprint('auth', __name__)
 
 
-def anti_forgery_state_token():
-    chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
-    return ''.join(random.choice(chars) for x in range(32))
-
-
 @auth.route('/login')
 def login():
-    state = anti_forgery_state_token()
+    state = token()
     login_session['state'] = state
     return render_template('auth/login.html', state=state)
 

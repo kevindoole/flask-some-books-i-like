@@ -1,4 +1,4 @@
-import os, json
+import os, json, random, string
 from flask import Flask
 from flask import session as login_session
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -14,6 +14,9 @@ app.config['SECRET_KEY'] = 'blurfschkie'
 UPLOAD_FOLDER = os.path.join(basedir, 'assets/images')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+def token():
+    chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    return ''.join(random.choice(chars) for x in range(32))
 
 db = SQLAlchemy(app)
 

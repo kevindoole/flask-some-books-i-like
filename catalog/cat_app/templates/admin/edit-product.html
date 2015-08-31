@@ -3,6 +3,7 @@
 {% block content %}
 	{% from "common/_form-helpers.html" import render_field %}
 	<form action="{{ request.path }}" method="post" enctype="multipart/form-data">
+		<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
 		{{ render_field(form.name) }}
 		{{ render_field(form.subhead) }}
 		{{ render_field(form.author) }}

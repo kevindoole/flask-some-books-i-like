@@ -1,6 +1,7 @@
-from flask import render_template, request, flash, redirect, url_for, Blueprint
+from flask import render_template, request, flash, redirect, url_for
+from flask import Blueprint, session, abort
 from functools import wraps
-from cat_app import app, db, login_session
+from cat_app import app, db, login_session, token
 from cat_app.models import Product, Category
 from cat_app.form_requests.product import ProductForm
 from werkzeug import secure_filename
@@ -10,6 +11,19 @@ ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
 admin = Blueprint('admin', __name__)
 
+@admin.before_request
+def csrf_protect():
+    if request.method == "POST":
+        token = session.pop('_csrf_token', None)
+        if not token or token != request.form.get('_csrf_token'):
+            abort(403)
+
+def generate_csrf_token():
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = token()
+    return session['_csrf_token']
+
+app.jinja_env.globals['csrf_token'] = generate_csrf_token
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
