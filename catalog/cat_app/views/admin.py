@@ -6,6 +6,7 @@ from cat_app.models import Product, Category
 from cat_app.form_requests.product import ProductForm
 from werkzeug import secure_filename
 import os
+from wand.image import Image
 
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
@@ -25,6 +26,30 @@ def generate_csrf_token():
 
 app.jinja_env.globals['csrf_token'] = generate_csrf_token
 
+
+def make_thumbnail_path(image_path):
+    filename = os.path.basename(image_path)
+    filename_pieces = os.path.splitext(image_path)
+    thumbnail_path = '-thumbnail'.join(filename_pieces)
+    return thumbnail_path
+
+app.jinja_env.globals['thumbnail'] = make_thumbnail_path
+
+def generate_thumbnail(image_path):
+    thumbnail_path = make_thumbnail_path(image_path)
+    img = Image(filename=image_path)
+    img_clone = img.clone()
+
+    # We want to make sure the height is never > 300px for thumbnails.
+    if img.size[1] > 300:
+        img_clone.resize(width=9999, height=300)
+
+    # If the width is still greater than 300px after resizing, crop
+    # toward center.
+    if img.size[0] > 300:
+        img_clone.crop(width=300, height=300, gravity='center')
+    img_clone.save(filename=thumbnail_path)
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
@@ -32,7 +57,9 @@ def allowed_file(filename):
 def upload_file(file):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        generate_thumbnail(file_path)
         return "/media/" + filename
 
 
