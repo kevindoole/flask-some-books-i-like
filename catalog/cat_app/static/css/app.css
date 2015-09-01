@@ -268,11 +268,15 @@ body {
   position: relative;
   top: 0;
   background: #333;
-  margin-bottom: 2em; }
+  margin-bottom: 2em;
+  font-family: "Lucida Grande", "Tahoma", "Verdana", "Arial", sans-serif; }
   .top-nav a {
     color: #fff; }
   .top-nav a:hover, .top-nav a:focus {
     text-decoration: underline; }
+  .top-nav ul, .top-nav li {
+    float: left;
+    margin-right: 1em; }
 
 .nav {
   text-align: center;

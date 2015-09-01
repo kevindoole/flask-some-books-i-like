@@ -5,11 +5,18 @@
 	background: $dark-gray;
 	margin-bottom: 2em;
 
+	font-family: $lucida-grande;
+
 	a {
 		color: #fff;
 	}
 	a:hover, a:focus {
 		text-decoration: underline;
+	}
+
+	ul, li {
+		float: left;
+		margin-right: 1em;
 	}
 }
 
