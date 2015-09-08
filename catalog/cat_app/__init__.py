@@ -10,6 +10,7 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SECRET_KEY'] = 'blurfschkie'
+app.config['WTF_CSRF_ENABLED'] = True;
 
 UPLOAD_FOLDER = os.path.join(basedir, 'assets/images')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
