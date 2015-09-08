@@ -1,12 +1,17 @@
+"""Handles user authentication with oath2."""
+# pylint: disable=F0401
+# pylint: disable=invalid-name
+# pylint: disable=E1101
+
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
 import json
 from flask import make_response, Blueprint, render_template, request
-from flask import flash, redirect, url_for
+from flask import flash, redirect
 import requests
 import os
-from cat_app import login_session, db, token
+from cat_app import login_session, token
 
 secrets_path = os.path.join('/vagrant/catalog/cat_app', 'client_secrets.json')
 CLIENT_ID = json.loads(open(secrets_path, 'r').read())['web']['client_id']
@@ -17,6 +22,7 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
 def login():
+    """Renders the login template."""
     state = token()
     login_session['state'] = state
     return render_template('auth/login.html', state=state)
@@ -24,6 +30,8 @@ def login():
 
 @auth.route('/gconnect', methods=['POST'])
 def gconnect():
+    """Handles Google+ login."""
+
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter'), 401)
@@ -97,6 +105,8 @@ def gconnect():
 
 @auth.route('/logout')
 def gdisconnect():
+    """Handles Google+ disconnect (logs people out of this app)."""
+
     access_token = login_session.get('access_token')
     if access_token is None:
         response = make_response(

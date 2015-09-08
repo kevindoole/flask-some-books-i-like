@@ -1,14 +1,20 @@
 """Creates the database needed for the catalog."""
+# pylint: disable=F0401
+# pylint: disable=invalid-name
+# pylint: disable=E1101
+
 from cat_app import db
 from slugify import slugify
 from datetime import datetime
 
 def slug(context):
-    slug = slugify(context.current_parameters['name'])
-    return slug
-
+    """Makes a slug from a string, containing only letters,
+    numbers and dashes."""
+    return slugify(context.current_parameters['name'])
 
 class Category(db.Model):
+    """An sqlalchemy model of a product category."""
+
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
@@ -22,6 +28,10 @@ class Category(db.Model):
 
     @staticmethod
     def find_or_create(name):
+        """Finds a matching bject from the DB, or generates a new one.
+        Args: name (The category name)
+        Returns: Instance of Category"""
+
         categories = Category.query.filter(Category.name == name).all()
         if categories:
             category = categories[0]
@@ -34,6 +44,8 @@ class Category(db.Model):
 
 
 class Product(db.Model):
+    """An sqlalchemy model of a product."""
+
     __tablename__ = 'product'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
@@ -44,7 +56,7 @@ class Product(db.Model):
     description = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime, default=datetime.utcnow,
-        onupdate=datetime.utcnow)
+                        onupdate=datetime.utcnow)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'),
                             nullable=True)
     category = db.relationship('Category',
