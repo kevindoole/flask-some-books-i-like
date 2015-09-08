@@ -69,14 +69,14 @@ def generate_thumbnail(image_path):
     img = Image(filename=image_path)
     img_clone = img.clone()
 
-    # We want to make sure the height is never > 300px for thumbnails.
-    if img.size[1] > 300:
-        img_clone.transform(resize='9999x300>')
-
-    # If the width is still greater than 300px after resizing, crop
-    # toward center.
+    # We want to make sure the thumbnail width maxes out at 300px.
     if img.size[0] > 300:
-        img_clone.crop(width=300, height=300, gravity='center')
+        img_clone.transform(resize='300x9999>')
+
+    # If the height is still greater than 300px after resizing, crop the
+    # bottom off, given the title of books is most often up top.
+    if img.size[1] > 300:
+        img_clone.crop(width=300, height=300, gravity='north')
 
     img_clone.save(filename=thumbnail_path)
 
