@@ -4,8 +4,8 @@ from flask import session as login_session
 from flask.ext.sqlalchemy import SQLAlchemy
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
-    os.path.join(basedir, 'storage/catalog.db')
+
+SQLALCHEMY_DATABASE_URI = 'postgresql:///catalog'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
