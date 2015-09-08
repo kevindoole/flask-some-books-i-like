@@ -42,12 +42,13 @@ def generate_thumbnail(image_path):
 
     # We want to make sure the height is never > 300px for thumbnails.
     if img.size[1] > 300:
-        img_clone.resize(width=9999, height=300)
+        img_clone.transform(resize='9999x300>')
 
     # If the width is still greater than 300px after resizing, crop
     # toward center.
     if img.size[0] > 300:
         img_clone.crop(width=300, height=300, gravity='center')
+
     img_clone.save(filename=thumbnail_path)
 
 def allowed_file(filename):
