@@ -35,6 +35,15 @@ def make_thumbnail_path(image_path):
 
 app.jinja_env.globals['thumbnail'] = make_thumbnail_path
 
+def image_from_form(form, existing_image_url=None):
+    image_url = existing_image_url
+
+    file = request.files[form.image.name]
+    if file.filename:
+        image_url = upload_file(file)
+
+    return image_url
+
 def generate_thumbnail(image_path):
     thumbnail_path = make_thumbnail_path(image_path)
     img = Image(filename=image_path)
@@ -78,19 +87,12 @@ def login_required(f):
 @login_required
 def new_product():
     form = ProductForm(request.form)
+
     if request.method == 'POST' and form.validate():
         category_name = form.category.data
-        categories = Category.query.filter(
-            Category.name == category_name).all()
-        if not len(categories):
-            category = Category(name=category_name)
-        else:
-            category = categories[0]
+        category = Category.find_or_create(category_name)
 
-        image_url = None
-        file = request.files[form.image.name]
-        if file.filename:
-            image_url = upload_file(file)
+        image_url = image_from_form(form)
 
         prod = Product(name=form.name.data, subhead=form.subhead.data,
                        author=form.author.data, image_url=image_url,
@@ -113,27 +115,18 @@ def edit_product(product_slug):
     product_query = Product.query.filter(Product.slug == product_slug)
     product = product_query.one()
     form = ProductForm(request.form, product)
+
     if request.method == 'POST' and form.validate():
         category_name = form.category.data
-        categories = Category.query.filter(
-            Category.name == category_name).all()
-        if not len(categories):
-            new_category = Category(name=category_name)
-            db.session.add(new_category)
-            db.session.commit()
-            category = Category.query.order_by(Category.id.desc()).first()
-        else:
-            category = categories[0]
+        category = Category.find_or_create(category_name)
 
-        image_url = product.image_url
-        file = request.files[form.image.name]
-        if file.filename:
-            image_url = upload_file(file)
+        image_url = image_from_form(form, existing_image_url=product.image_url)
 
         product_query.update({"name": form.name.data,
             "description": form.description.data, "category_id": category.id,
             "image_url": image_url})
         db.session.commit()
+
         flash(message='Product updated', category='success')
 
         url = url_for('frontend.product', category_slug=category.slug,

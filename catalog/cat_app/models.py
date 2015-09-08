@@ -20,6 +20,18 @@ class Category(db.Model):
     def __repr__(self):
         return self.name
 
+    @staticmethod
+    def find_or_create(name):
+        categories = Category.query.filter(Category.name == name).all()
+        if categories:
+            category = categories[0]
+        else:
+            category = Category(name=name)
+            db.session.add(category)
+            db.session.commit()
+
+        return category
+
 
 class Product(db.Model):
     __tablename__ = 'product'
