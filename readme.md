@@ -19,8 +19,8 @@ First things first, make sure you have VirtualBox and Vagrant installed:
 
 All good? Ok, now download the repo and start up the virtual machine:
 ```bash
-$ git clone []
-$ cd __
+$ git clone https://github.com/kevindoole/flask-some-books-i-like
+$ cd flask-some-books-i-like
 $ vagrant up
 ```
 The `vagrant up` command boots up the VM and create a database that will
