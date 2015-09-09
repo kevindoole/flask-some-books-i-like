@@ -54,6 +54,13 @@ Ok, all set to load the app now. Just run
 `python /vagrant/catalog/run-server.py` and visit
 [http://localhost:8000](http://localhost:8000).
 
+### Running the tests
+It's pretty easy:
+```
+vagrant@vagrant-ubuntu-trusty-32:~$ python /vagrant/catalog/testCatalog.py
+```
+
+
 -
 
 ### Stuff to do inside the app
