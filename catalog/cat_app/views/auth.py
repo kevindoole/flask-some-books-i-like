@@ -117,19 +117,18 @@ def gdisconnect():
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
 
-    if result['status'] == '200':
-        del login_session['access_token']
-        del login_session['gplus_id']
-        del login_session['username']
-        # del login_session['email']
-        del login_session['picture']
+    del login_session['access_token']
+    del login_session['gplus_id']
+    del login_session['username']
+    del login_session['picture']
 
-        # response = make_response(json.dumps('Successfully disconnected.'), 200)
-        # response.headers['Content-Type'] = 'application/json'
+    if result['status'] == '200':
         flash('You logged out.', 'success')
-        return redirect('/')
     else:
-        response = make_response(
-            json.dumps('Failed to revoke token for given user.', 400))
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash("""You logged out, but something went wrong revoking
+              your Google+ token. It shouldn't matter at all,
+              but if you have any concern, you can visit the
+              authorized apps page of you google account to make
+              sure this app has been revoked.""", 'success')
+
+    return redirect('/')
