@@ -28,15 +28,19 @@ def login():
     return render_template('auth/login.html', state=state)
 
 
+def make_json_response(message, status):
+    """Makes a json response with a given status code."""
+    response = make_response(json.dumps(message), status)
+    response.headers['Content-Type'] = 'application/json'
+    return response
+
 @auth.route('/gconnect', methods=['POST'])
 def gconnect():
     """Handles Google+ login."""
 
     # Validate state token
     if request.args.get('state') != login_session['state']:
-        response = make_response(json.dumps('Invalid state parameter'), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        return make_json_response('Invalid state parameter', 401)
 
     auth_code = request.data
 
@@ -46,10 +50,8 @@ def gconnect():
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(auth_code)
     except FlowExchangeError:
-        response = make_response(
-            json.dumps('Failed to upgrade the authorization code.'), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        return make_json_response(
+            'Failed to upgrade the authorization code.', 401)
 
     # Check that the access token is valid
     access_token = credentials.access_token
@@ -59,33 +61,23 @@ def gconnect():
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
     if result.get('error') is not None:
-        response = make_response(json.dumps(result.get('error')), 500)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        return make_json_response(result.get('error'), 500)
 
     # Verify that the access token is used for the intended user
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
-        response = make_response(
+        return make_json_response(
             "Token's user ID doesn't match given user ID.", 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
 
     # Verify that the access token is valid for this app
     if result['issued_to'] != CLIENT_ID:
-        response = make_response(
-            json.dumps("Token's client ID does not match app's"), 401)
-        print "Token's client ID does not match app's"
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        return make_json_response(
+            "Token's client ID does not match app's", 401)
 
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(
-            json.dumps('Current user is already connected'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        return make_json_response('Current user is already connected', 200)
 
     login_session['access_token'] = access_token
     login_session['gplus_id'] = gplus_id
@@ -96,7 +88,6 @@ def gconnect():
 
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
-    # login_session['email'] = data['email']
 
     flash("You are now logged in as %s" % login_session['username'], 'success')
 
