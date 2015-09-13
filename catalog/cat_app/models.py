@@ -3,7 +3,7 @@
 # pylint: disable=invalid-name
 # pylint: disable=E1101
 
-from cat_app import db
+from cat_app import db, images
 from slugify import slugify
 from datetime import datetime
 
@@ -78,3 +78,28 @@ class Product(db.Model):
 
         if 'category' in details:
             self.category = details['category']
+
+    @staticmethod
+    def from_form(form, product=None, product_query=None):
+        category = Category.find_or_create(form.category.data)
+
+        details = {'name': form.name.data,
+                'subhead': form.subhead.data,
+                'author': form.author.data,
+                'year': form.year.data,
+                'description': form.description.data}
+
+        if product is None:
+            details['category'] = category
+            details['image_url'] = images.image_from_form(form)
+            product = Product(details)
+        else:
+            details['image_url'] = images.image_from_form(form, product.image_url)
+            product.category = category
+            for key in details:
+                setattr(product, key, details[key])
+
+        db.session.add(product)
+        db.session.commit()
+
+        return product
