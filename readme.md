@@ -38,7 +38,8 @@ vagrant@vagrant-ubuntu-trusty-32:~$ # this is your command prompt inside the VM
 ```
 
 If you don't care to see my book list, you're more than welcome to clean out
-the database so you can start fresh.
+the database so you can start fresh. (You can reload all my books at anytime by
+running `python /vagrant/catalog/seed.py`)
 ```bash
 vagrant@vagrant-ubuntu-trusty-32:~$ cd /vagrant/catalog/
 vagrant@vagrant-ubuntu-trusty-32:~$ python
@@ -47,12 +48,12 @@ vagrant@vagrant-ubuntu-trusty-32:~$ python
 > db.create_all()
 > exit()
 ```
-You can reload all my books at anytime by running
-`python /vagrant/catalog/seed.py`
 
-Ok, all set to load the app now. Just run
-`python /vagrant/catalog/run_server.py` and visit
-[http://localhost:8000](http://localhost:8000).
+Ok, all set to load the app now. Start the web server:
+```bash
+python /vagrant/catalog/run_server.py`
+```
+And now visit [http://localhost:8000](http://localhost:8000).
 
 ### Running the tests
 It's pretty easy:
