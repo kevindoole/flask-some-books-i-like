@@ -51,7 +51,7 @@ You can reload all my books at anytime by running
 `python /vagrant/catalog/seed.py`
 
 Ok, all set to load the app now. Just run
-`python /vagrant/catalog/run-server.py` and visit
+`python /vagrant/catalog/run_server.py` and visit
 [http://localhost:8000](http://localhost:8000).
 
 ### Running the tests
