@@ -7,9 +7,8 @@ from flask import render_template, request, flash, redirect, url_for
 from flask import Blueprint, session, abort
 from functools import wraps
 from cat_app import app, db, login_session, token, images
-from cat_app.models import Product, Category
+from cat_app.models import Product
 from cat_app.form_requests.product import ProductForm
-import os
 
 admin = Blueprint('admin', __name__)
 
@@ -53,7 +52,7 @@ def login_required(f):
 @admin.route('/catalog/create-product')
 @login_required
 def new_product():
-    """Presents and processes new products."""
+    """Presents the form to create a new product."""
     form = ProductForm(request.form)
     return render_template('admin/edit-product.html', form=form)
 
@@ -61,6 +60,7 @@ def new_product():
 @admin.route('/catalog/create-product', methods=['POST'])
 @login_required
 def store_product():
+    """Persists a new product entry in the database."""
     form = ProductForm(request.form)
 
     if not form.validate():
@@ -79,8 +79,8 @@ def store_product():
 @admin.route('/catalog/<string:product_slug>/edit')
 @login_required
 def edit_product(product_slug):
-    """Presents and processes the form to edit products."""
-    product = Product.query.filter(Product.slug == product_slug).one()
+    """Presents the form to edit products."""
+    product = Product.by_slug(product_slug)
     form = ProductForm(request.form, product)
 
     return render_template(
@@ -90,16 +90,15 @@ def edit_product(product_slug):
 @admin.route('/catalog/<string:product_slug>/edit', methods=['POST'])
 @login_required
 def update_product(product_slug):
-    product_query = Product.query.filter(Product.slug == product_slug)
-    product = product_query.one()
+    """Saves changes to an existing product."""
+    product = Product.by_slug(product_slug)
     form = ProductForm(request.form, product)
 
     if not form.validate():
         return render_template(
             'admin/edit-product.html', form=form, product=product)
 
-    product = Product.from_form(
-        form, product=product, product_query=product_query)
+    product = Product.from_form(form, product=product)
 
     flash(message='Product updated', category='success')
 
@@ -112,7 +111,7 @@ def update_product(product_slug):
 @login_required
 def delete_product(product_slug):
     """Deletes a product."""
-    product = Product.query.filter(Product.slug == product_slug).one()
+    product = Product.by_slug(product_slug)
     if request.method == 'POST':
         db.session.delete(product)
         db.session.commit()

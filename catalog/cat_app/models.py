@@ -10,7 +10,7 @@ from datetime import datetime
 def slug(context):
     """Makes a slug from a string, containing only letters,
     numbers and dashes."""
-    if ('name' in context.current_parameters):
+    if 'name' in context.current_parameters:
         return slugify(context.current_parameters['name'])
 
 class Category(db.Model):
@@ -28,12 +28,23 @@ class Category(db.Model):
         return self.name
 
     @staticmethod
+    def by_name(name):
+        """Get a list of categories by a name."""
+        return Category.query.filter(Category.name == name).all()
+
+    @staticmethod
+    def by_slug(category_slug):
+        """Gets a single category by it's slug."""
+        return Category.query.filter(
+            Category.slug == category_slug).first_or_404()
+
+    @staticmethod
     def find_or_create(name):
         """Finds a matching bject from the DB, or generates a new one.
         Args: name (The category name)
         Returns: Instance of Category"""
 
-        categories = Category.query.filter(Category.name == name).all()
+        categories = Category.by_name(name)
         if categories:
             category = categories[0]
         else:
@@ -80,14 +91,27 @@ class Product(db.Model):
             self.category = details['category']
 
     @staticmethod
-    def from_form(form, product=None, product_query=None):
+    def by_slug(product_slug):
+        """Gets one product by slug."""
+        return Product.query.filter(Product.slug == product_slug).first_or_404()
+
+    @staticmethod
+    def by_slug_and_cat(category_slug, product_slug):
+        """Gets a single product from a category and product slug."""
+        return Product.query.filter(
+            Product.slug == product_slug,
+            Category.slug == category_slug).first_or_404()
+
+    @staticmethod
+    def from_form(form, product=None):
+        """Creates or updates a product from a wtf-form."""
         category = Category.find_or_create(form.category.data)
 
         details = {'name': form.name.data,
-                'subhead': form.subhead.data,
-                'author': form.author.data,
-                'year': form.year.data,
-                'description': form.description.data}
+                   'subhead': form.subhead.data,
+                   'author': form.author.data,
+                   'year': form.year.data,
+                   'description': form.description.data}
 
         if product is None:
             details['category'] = category

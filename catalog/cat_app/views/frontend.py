@@ -29,15 +29,14 @@ def homepage():
 @frontend.route('/catalog/<string:category_slug>/<string:product_slug>')
 def product(category_slug, product_slug):
     """Shows a single product."""
-    prod = Product.query.filter(
-        Product.slug == product_slug, Category.slug == category_slug).one()
+    prod = Product.by_slug_and_cat(category_slug, product_slug)
     return render_template('frontend/product.html', product=prod)
 
 
 @frontend.route('/catalog/<string:category_slug>/items')
 def catalog_archive(category_slug):
     """Shows a list of products attached to a category."""
-    category = Category.query.filter(Category.slug == category_slug).one()
+    category = Category.by_slug(category_slug)
     products = category.products.all()
     categories = Category.query.all()
     return render_template('frontend/home.html',

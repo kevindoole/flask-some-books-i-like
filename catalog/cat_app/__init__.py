@@ -1,3 +1,8 @@
+"""Initializes the Flask app."""
+# pylint: disable=F0401
+# pylint: disable=invalid-name
+# pylint: disable=E1101
+
 import os, json, random, string
 from flask import Flask
 from flask import session as login_session
@@ -10,12 +15,13 @@ SQLALCHEMY_DATABASE_URI = 'postgresql:///catalog'
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SECRET_KEY'] = 'blurfschkie'
-app.config['WTF_CSRF_ENABLED'] = True;
+app.config['WTF_CSRF_ENABLED'] = True
 
 UPLOAD_FOLDER = os.path.join(basedir, 'assets/images')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def token():
+    """Generates a random string."""
     chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
     return ''.join(random.choice(chars) for x in range(32))
 
