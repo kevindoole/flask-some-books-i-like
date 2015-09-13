@@ -51,7 +51,7 @@ vagrant@vagrant-ubuntu-trusty-32:~$ python
 
 Ok, all set to load the app now. Start the web server:
 ```bash
-python /vagrant/catalog/run_server.py`
+python /vagrant/catalog/run_server.py
 ```
 And now visit [http://localhost:8000](http://localhost:8000).
 
