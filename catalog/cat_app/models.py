@@ -10,7 +10,8 @@ from datetime import datetime
 def slug(context):
     """Makes a slug from a string, containing only letters,
     numbers and dashes."""
-    return slugify(context.current_parameters['name'])
+    if ('name' in context.current_parameters):
+        return slugify(context.current_parameters['name'])
 
 class Category(db.Model):
     """An sqlalchemy model of a product category."""
@@ -63,14 +64,17 @@ class Product(db.Model):
                                backref=db.backref('products', lazy='dynamic'))
     slug = db.Column(db.String(250), default=slug, onupdate=slug)
 
-    def __init__(self, name, description, category, author, year,
-                 subhead=None, image_url=None):
-        self.name = name
-        self.subhead = subhead
-        self.description = description
-        self.category = category
-        self.author = author
-        self.year = year
-        if image_url == None:
+    def __init__(self, details):
+        self.name = details['name']
+        self.subhead = details['subhead']
+        self.description = details['description']
+        self.author = details['author']
+        self.year = details['year']
+        if 'image_url' in details and details['image_url'] is not None:
+            image_url = details['image_url']
+        else:
             image_url = "http://placehold.it/300x300"
         self.image_url = image_url
+
+        if 'category' in details:
+            self.category = details['category']

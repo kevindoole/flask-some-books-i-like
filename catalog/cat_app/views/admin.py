@@ -30,6 +30,7 @@ def csrf_protect():
         if not session_token or session_token != form_token:
             abort(403)
 
+
 def generate_csrf_token():
     """Generates a csrf token."""
     if '_csrf_token' not in session:
@@ -48,6 +49,7 @@ def make_thumbnail_path(image_path):
 
 app.jinja_env.globals['thumbnail'] = make_thumbnail_path
 
+
 def image_from_form(form, existing_image_url=None):
     """Saves an image uploaded in a form request and returns the
     resulting URL."""
@@ -62,6 +64,7 @@ def image_from_form(form, existing_image_url=None):
         return "/media/" + filename
 
     return image_url
+
 
 def generate_thumbnail(image_path):
     """Generates a 300px thumbnail if an image is too large."""
@@ -79,6 +82,7 @@ def generate_thumbnail(image_path):
         img_clone.crop(width=300, height=300, gravity='north')
 
     img_clone.save(filename=thumbnail_path)
+
 
 def allowed_file(filename):
     """Checks if the filename's extension is allowed."""
@@ -98,60 +102,87 @@ def login_required(f):
     return protected_route
 
 
-@admin.route('/catalog/create-product', methods=['GET', 'POST'])
+def product_from_form(form, product=None, product_query=None):
+    category = Category.find_or_create(form.category.data)
+
+    details = {'name': form.name.data,
+            'subhead': form.subhead.data,
+            'author': form.author.data,
+            'year': form.year.data,
+            'description': form.description.data}
+
+    if product is None:
+        details['category'] = category
+        details['image_url'] = image_from_form(form)
+        product = Product(details)
+    else:
+        details['image_url'] = image_from_form(form, product.image_url)
+        product.category = category
+        for key in details:
+            setattr(product, key, details[key])
+
+    db.session.add(product)
+    db.session.commit()
+
+    return product
+
+
+@admin.route('/catalog/create-product')
 @login_required
 def new_product():
     """Presents and processes new products."""
     form = ProductForm(request.form)
-
-    if request.method == 'POST' and form.validate():
-        category_name = form.category.data
-        category = Category.find_or_create(category_name)
-
-        image_url = image_from_form(form)
-
-        prod = Product(name=form.name.data, subhead=form.subhead.data,
-                       author=form.author.data, image_url=image_url,
-                       year=form.year.data, description=form.description.data,
-                       category=category)
-        db.session.add(prod)
-        db.session.commit()
-        flash(message='Product created', category='success')
-
-        url = url_for('frontend.product', category_slug=category.slug,
-                      product_slug=prod.slug)
-        return redirect(url)
-
     return render_template('admin/edit-product.html', form=form)
 
 
-@admin.route('/catalog/<string:product_slug>/edit', methods=['GET', 'POST'])
+@admin.route('/catalog/create-product', methods=['POST'])
+@login_required
+def store_product():
+    form = ProductForm(request.form)
+
+    if not form.validate():
+        return render_template('admin/edit-product.html', form=form)
+
+    prod = product_from_form(form)
+
+    flash(message='Product created', category='success')
+
+    url = url_for('frontend.product',
+                  category_slug=prod.category.slug,
+                  product_slug=prod.slug)
+    return redirect(url)
+
+
+@admin.route('/catalog/<string:product_slug>/edit')
 @login_required
 def edit_product(product_slug):
     """Presents and processes the form to edit products."""
+    product = Product.query.filter(Product.slug == product_slug).one()
+    form = ProductForm(request.form, product)
+
+    return render_template(
+        'admin/edit-product.html', form=form, product=product)
+
+
+@admin.route('/catalog/<string:product_slug>/edit', methods=['POST'])
+@login_required
+def update_product(product_slug):
     product_query = Product.query.filter(Product.slug == product_slug)
     product = product_query.one()
     form = ProductForm(request.form, product)
 
-    if request.method == 'POST' and form.validate():
-        category_name = form.category.data
-        category = Category.find_or_create(category_name)
+    if not form.validate():
+        return render_template(
+            'admin/edit-product.html', form=form, product=product)
 
-        image_url = image_from_form(form, existing_image_url=product.image_url)
+    product = product_from_form(
+        form, product=product, product_query=product_query)
 
-        product_query.update({"name": form.name.data,
-                              "description": form.description.data,
-                              "category_id": category.id,
-                              "image_url": image_url})
-        db.session.commit()
+    flash(message='Product updated', category='success')
 
-        flash(message='Product updated', category='success')
-
-        url = url_for('frontend.product', category_slug=category.slug,
-                      product_slug=product.slug)
-        return redirect(url)
-
-    return render_template('admin/edit-product.html', form=form, product=product)
+    url = url_for('frontend.product', category_slug=product.category.slug,
+                  product_slug=product.slug)
+    return redirect(url)
 
 
 @admin.route('/catalog/<string:product_slug>/delete', methods=['GET', 'POST'])

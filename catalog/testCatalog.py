@@ -24,6 +24,19 @@ class TestCatalog(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
+    def make_product(self):
+        cat = Category(name='Gears')
+        prod = Product({'name': 'Big Gears',
+                        'description': 'blah',
+                        'category': cat,
+                        'subhead': 'this subhead',
+                        'author': 'Kevin',
+                        'year': 2014})
+        db.session.add(prod)
+        db.session.commit()
+
+        return prod
+
     def test_empty_db(self):
         homepage = self.app.get('/')
         assert 'No products' in homepage.data
@@ -36,9 +49,13 @@ class TestCatalog(unittest.TestCase):
         cat = Category.query.filter(Category.name == 'TestCategory').one()
         assert cat.name == 'TestCategory'
 
-        prod = Product(
-            name='TestProduct', description='This is a product', category=cat,
-            subhead='this subhead', author='Kevin', year=2104)
+        prod = Product({'name': 'TestProduct',
+                        'description': 'This is a product',
+                        'category': cat,
+                        'subhead': 'this subhead',
+                        'author': 'Kevin',
+                        'year': 2014})
+
         db.session.add(prod)
         db.session.commit()
         prod = Product.query.filter(Product.name == 'TestProduct').one()
@@ -116,12 +133,19 @@ class TestCatalog(unittest.TestCase):
 
         gears = Category.query.filter(Category.name == 'Gears').one()
         sprockets = Category.query.filter(Category.name == 'Sprockets').one()
-        prod1 = Product(
-            name='Big Gears', description='blah', category=gears,
-            subhead='this subhead', author='Kevin', year=2104)
-        prod2 = Product(
-            name='Small Sprockets', description='blah', category=sprockets,
-            subhead='this subhead', author='Kevin', year=2104)
+
+        prod1 = Product({'name': 'Big Gears',
+                        'description': 'blah',
+                        'category': gears,
+                        'subhead': 'this subhead',
+                        'author': 'Kevin',
+                        'year': 2014})
+        prod2 = Product({'name': 'Small Sprockets',
+                        'description': 'blah',
+                        'category': sprockets,
+                        'subhead': 'this subhead',
+                        'author': 'Kevin',
+                        'year': 2014})
         db.session.add(prod1)
         db.session.add(prod2)
         db.session.commit()
@@ -135,13 +159,7 @@ class TestCatalog(unittest.TestCase):
         assert 'Big Gears' not in sprockets_page.data
 
     def test_it_confirms_deletion(self):
-        cat = Category(name='Gears')
-        prod = Product(
-            name='Big Gears', description='blah', category=cat,
-            subhead='this subhead', author='Kevin', year=2104)
-        db.session.add(cat)
-        db.session.add(prod)
-        db.session.commit()
+        prod = self.make_product()
 
         with self.app as c:
             with c.session_transaction() as sess:
@@ -151,13 +169,7 @@ class TestCatalog(unittest.TestCase):
         assert 'Are you sure? Delete &ldquo;Big Gears&rdquo;?' in delete_page.data
 
     def test_it_deletes_products(self):
-        cat = Category(name='Gears')
-        prod = Product(
-            name='Big Gears', description='blah', category=cat,
-            subhead='this subhead', author='Kevin', year=2104)
-        db.session.add(cat)
-        db.session.add(prod)
-        db.session.commit()
+        prod = self.make_product()
 
         with self.app as c:
             with c.session_transaction() as sess:
@@ -172,13 +184,7 @@ class TestCatalog(unittest.TestCase):
             with c.session_transaction() as sess:
                 sess['username'] = 'testuser'
 
-        cat = Category(name='Gears')
-        prod = Product(
-            name='Big Gears', description='blah', category=cat,
-            subhead='this subhead', author='Kevin', year=2104)
-        db.session.add(cat)
-        db.session.add(prod)
-        db.session.commit()
+        prod = self.make_product()
 
         edit_page = self.app.get('/catalog/big-gears/edit')
         assert 'value="Big Gears"' in edit_page.data
@@ -218,12 +224,7 @@ class TestCatalog(unittest.TestCase):
         assert 'src="/media/psychotic-reactions.jpg"' in create_result.data
 
     def test_it_provides_a_json_endpoint(self):
-        cat = Category(name='Gears')
-        prod = Product(
-            name='Big Gears', description='blah', category=cat,
-            subhead='this subhead', author='Kevin', year=2104)
-        db.session.add(prod)
-        db.session.commit()
+        prod = self.make_product()
 
         json = self.app.get('/catalog.json');
         assert '"name": "Gears"' in json.data
@@ -232,7 +233,7 @@ class TestCatalog(unittest.TestCase):
         assert '"image_url": "http://placehold.it/300x300",' in json.data
         assert '"name": "Big Gears",' in json.data
         assert '"subhead": "this subhead",' in json.data
-        assert '"year": 2104' in json.data
+        assert '"year": 2014' in json.data
 
 if __name__ == '__main__':
     unittest.main()
