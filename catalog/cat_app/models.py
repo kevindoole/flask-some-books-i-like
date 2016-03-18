@@ -73,10 +73,11 @@ class Product(db.Model):
                             nullable=True)
     category = db.relationship('Category',
                                backref=db.backref('products', lazy='dynamic'))
-    slug = db.Column(db.String(250), default=slug, onupdate=slug)
+    slug = db.Column(db.String(250))
 
     def __init__(self, details):
         self.name = details['name']
+        self.slug = slug(details['name'])
         self.subhead = details['subhead']
         self.description = details['description']
         self.author = details['author']
