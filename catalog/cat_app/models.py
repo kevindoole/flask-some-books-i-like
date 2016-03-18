@@ -77,7 +77,7 @@ class Product(db.Model):
 
     def __init__(self, details):
         self.name = details['name']
-        self.slug = slug(details['name'])
+        self.slug = slugify(details['name'])
         self.subhead = details['subhead']
         self.description = details['description']
         self.author = details['author']
